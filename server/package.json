@@ -6,7 +6,7 @@
   "scripts": {
     "script": "nodemon src/db/script.ts",
     "dev": "nodemon src/app.ts",
-    "build": "npm i && tsc --build && prisma generate --schema=./src/db/prisma/schema.prisma && prisma migrate dev --schema=./src/db/prisma/schema.prisma",
+    "build": "npm i && tsc --build && prisma generate --schema=./src/db/prisma/schema.prisma && prisma migrate deploy --schema=./src/db/prisma/schema.prisma",
     "start": "node ./dist/app.js",
     "prisma:generate": "npx prisma generate"
   },
