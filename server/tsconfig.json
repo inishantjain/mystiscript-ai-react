@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    // "lib": ["es2017", "esnext.asynciterable"],
+    // "typeRoots": ["node_modules/@types"],
+    // "allowSyntheticDefaultImports": true,
+    // "experimentalDecorators": true,
+    // "emitDecoratorMetadata": true,
+    // "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    // "noEmit": false,
+    "resolveJsonModule": true,
+    "declaration": true,
+    // "allowJs": true,
+    // "baseUrl": "src"
+    "typeRoots": ["@types"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"],
+  "typeRoots": ["./node_modules/@types"]
+}

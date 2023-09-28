@@ -1,0 +1,16 @@
+#ide settings
+.vscode
+#logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+#build
+dist
+#local files
+*.local
+node_modules
+# Keep environment variables out of version control
+.env

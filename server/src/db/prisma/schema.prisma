@@ -1,0 +1,38 @@
+// schema.prisma
+
+generator client {
+    provider = "prisma-client-js"
+    // output   = "./src/db/generated"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// database models
+
+model User {
+    // id         String @id @default(uuid()) //remember make id uuid not auto for security purposes
+    username   String @id @default(uuid())
+    name       String
+    email      String @unique
+    about      String @default("This is where you write about yourself.")
+    password   String
+    myPosts    Post[] @relation("myPosts")
+    savedPosts Post[] @relation("savedPosts")
+    likedPosts Post[] @relation("upvotedPosts")
+}
+
+model Post {
+    id        String   @id @default(uuid())
+    title     String
+    content   String
+    prompt    String
+    author    User     @relation("myPosts", fields: [authorId], references: [username])
+    authorId  String //@db.ObjectId(annotation not suppoted for postgres)
+    likedBy   User[]   @relation("upvotedPosts")
+    savedBy   User[]   @relation("savedPosts")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
