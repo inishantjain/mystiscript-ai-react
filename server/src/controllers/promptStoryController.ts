@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { requestStory } from "../utils/requestStory";
 import { BadRequestError, CustomAPIError } from "../errors";
+
+/*<----GENERATE_STORY--->*/
 export const generatePromptStory = async (req: Request, res: Response) => {
   const prompt = req.body.prompt;
   if (!prompt) throw new BadRequestError("Prompt not provided");

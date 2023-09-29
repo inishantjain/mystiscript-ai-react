@@ -15,3 +15,6 @@ npx prisma migrate dev
 ## More commands
 
 https://www.prisma.io/docs/concepts/components/prisma-migrate/migrate-development-production
+
+## 
+- Make sure to run npm i to deploy on to the vercel

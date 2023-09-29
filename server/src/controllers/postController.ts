@@ -3,6 +3,7 @@ import { prisma } from "../config/database";
 import { BadRequestError, CustomAPIError, NotFoundError } from "../errors";
 import { StatusCodes } from "http-status-codes";
 
+/*<----CREATE_POST--->*/
 export const createPost = async (req: Request, res: Response) => {
   const { id } = req.user;
   const { title, content, prompt } = req.body;
@@ -15,6 +16,7 @@ export const createPost = async (req: Request, res: Response) => {
   res.status(StatusCodes.CREATED).json({ msg: "Post created successfully", postId: newPost.id });
 };
 
+/*<----GET_POST_BYid--->*/
 export const getPost = async (req: Request, res: Response) => {
   const postId = req.params.postId;
   const post = await prisma.post.findFirst({
@@ -28,6 +30,7 @@ export const getPost = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ data: post });
 };
 
+/*<-----DELETE_POST---->*/
 export const deletePost = async (req: Request, res: Response) => {
   const postId = req.params.postId;
   const post = await prisma.post.delete({ where: { id: postId } });
@@ -37,6 +40,7 @@ export const deletePost = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ msg: "Post deleted successfully" });
 };
 
+/*<----GET_USER_POSTS--->*/
 export const getUserPosts = async (req: Request, res: Response) => {
   const username = req.query.userId as string;
   if (!username) throw new BadRequestError("Provide a userId query parameter");
@@ -51,6 +55,7 @@ export const getUserPosts = async (req: Request, res: Response) => {
   res.status(200).json(posts);
 };
 
+/*<------GET_POST(pagination)----->*/
 export const getPosts = async (req: Request, res: Response) => {
   const { page = "1", count = "10" }: { page?: string; count?: string } = req.query;
   const pageNum = parseInt(page) || 1; //can be NaN
@@ -68,6 +73,7 @@ export const getPosts = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json(posts);
 };
 
+/*<----SAVE_POST--->*/
 export const savePost = async (req: Request, res: Response) => {
   const postId = req.body.postId;
   if (!postId) throw new BadRequestError("Provide a post ID");
@@ -103,6 +109,7 @@ export const savePost = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ status: StatusCodes.OK });
 };
 
+/*<----LIKE_POST--->*/
 export const likePost = async (req: Request, res: Response) => {
   const postId = req.body.postId;
   if (!postId) throw new BadRequestError("Provide a post ID");
