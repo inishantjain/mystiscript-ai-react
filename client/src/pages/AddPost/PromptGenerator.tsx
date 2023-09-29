@@ -12,9 +12,10 @@ function PromptGenerator() {
     try {
       const response: ReadableStream<Uint8Array> | undefined = await generateStoryAPI(prompt);
       if (!response) return;
-      const reader = response.getReader();
 
+      const reader = response.getReader();
       const textDecoder = new TextDecoder();
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) {
@@ -51,6 +52,7 @@ function PromptGenerator() {
         {/* current response */}
         {currResponse && <div className=" p-3 rounded border border-teal-500 ">{currResponse}</div>}
       </div>
+
       {/* fixed prompt input */}
       <form
         onSubmit={(e) => sendHandler(e)}
