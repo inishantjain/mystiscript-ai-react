@@ -34,7 +34,7 @@ const Register = () => {
 
   if (isSuccess) {
     toast.success("Account created successfully");
-    return <Navigate to={"login"} />;
+    return <Navigate to={"/login"} />;
   }
 
   return (
