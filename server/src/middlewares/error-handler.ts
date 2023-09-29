@@ -21,5 +21,5 @@ export const errorHandlerMiddleware = (
     console.error(err.message);
   }
 
-  return res.status(customError.statusCode).json({ msg: customError.message });
+  return res.status(customError.statusCode).json({ message: customError.message });
 };

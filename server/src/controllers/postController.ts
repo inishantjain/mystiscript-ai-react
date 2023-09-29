@@ -13,7 +13,7 @@ export const createPost = async (req: Request, res: Response) => {
 
   if (!newPost) throw new CustomAPIError("Trouble in creating post");
 
-  res.status(StatusCodes.CREATED).json({ msg: "Post created successfully", postId: newPost.id });
+  res.status(StatusCodes.CREATED).json({ message: "Post created successfully", postId: newPost.id });
 };
 
 /*<----GET_POST_BYid--->*/
@@ -37,7 +37,7 @@ export const deletePost = async (req: Request, res: Response) => {
 
   if (!post /*==null*/) throw new NotFoundError("No post found with id " + postId);
 
-  res.status(StatusCodes.OK).json({ msg: "Post deleted successfully" });
+  res.status(StatusCodes.OK).json({ message: "Post deleted successfully" });
 };
 
 /*<----GET_USER_POSTS--->*/
