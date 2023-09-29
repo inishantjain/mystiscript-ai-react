@@ -13,11 +13,11 @@ function index() {
   if (isLoading) return <LoaderView />;
   if (data == null || isError) return <div>Error Occurred</div>;
   return (
-    <>
+    <div className="w-11/12 min-h-screen mx-auto py-10 max-w-screen-lg">
       <h1 className="text-center text-xl">Explore Post By Others</h1>
       <CardsContainer data={data} />
-      <Pagination setSearchParams={setSearchParams} page={page} />
-    </>
+      <Pagination isLastPage={data.length < 10} setSearchParams={setSearchParams} page={page} />
+    </div>
   );
 }
 

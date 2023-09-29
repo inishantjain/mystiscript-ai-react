@@ -11,7 +11,7 @@ function LatestStories() {
     <section>
       <div className="mx-auto w-11/12 max-w-screen-lg mt-6">
         <h2 className="text-3xl font-semibold">Latest Stories</h2>
-        <div className="justify-items-center pt-10 grid md:grid-cols-2 gap-5">
+        <div className="justify-items-center pt-10 grid md:grid-cols-2 gap-10">
           {data.map((post) => (
             <StoryCard key={post.id} {...post} />
           ))}

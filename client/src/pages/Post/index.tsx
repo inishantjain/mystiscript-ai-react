@@ -18,12 +18,12 @@ function PostPage() {
 
   return (
     <div>
-      <div className="text-brownie mx-auto max-w-screen-lg py-10">
+      <div className="w-11/12 text-brownie min-h-screen mx-auto max-w-screen-lg py-5">
         {/* title */}
         <h1 className="text-4xl font-semibold">{post?.title}</h1>
 
         {/* Author, ShareLinks */}
-        <div className="flex text-lg gap-5 items-center mt-8 mb-4">
+        <div className="flex flex-col sm:flex-row items-start text-lg gap-2 sm:gap-6 sm:items-center my-8 ">
           <div className="flex items-center">
             <img
               src={`https://api.dicebear.com/7.x/pixel-art/svg?seed${post?.author?.name}`}
@@ -33,7 +33,7 @@ function PostPage() {
             <span>{post?.author.name}</span>
           </div>
           <div>
-            <span className="text-gray-500">{formatDate(post?.createdAt!)}</span>
+            <span className="text-gray-500 text-sm sm:text-base">{formatDate(post?.createdAt!)}</span>
           </div>
           {/* <span className="flex-1">spacer</span> */}
           <ShareLinks />
@@ -46,7 +46,7 @@ function PostPage() {
           likeCount={post?.likedBy.length || 0}
           isSaved={user?.savedPosts.some((post) => post.id === postId) || false}
         />
-        <div className="mt-4">
+        <div className="mt-8">
           <h4>
             <span className="font-bold">Prompt</span> : {post?.prompt}
           </h4>
