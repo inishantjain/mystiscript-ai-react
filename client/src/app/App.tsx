@@ -30,6 +30,7 @@ function App() {
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <div className="flex justify-end mr-5 p-1">Made with ❤️ by Nish</div>
     </div>
   );
 }
