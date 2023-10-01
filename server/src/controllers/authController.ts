@@ -7,38 +7,80 @@ import { FIVE_MINUTES, ONE_MONTH } from "../utils/constants/duration";
 import crypto from "crypto";
 import { mailSender } from "../utils/emails/mailSender";
 import { setPasswordTemplate } from "../utils/emails/setPasswordTemplate";
+import { accountCreationTemplate } from "../utils/emails/accountCreationTemplate";
 
 /*<-------REGISTER------->*/
 export const register = async (req: Request, res: Response) => {
+  // Extract name and email from the request body
   const { name, email } = req.body;
+
+  // Check if name and email are provided in the request body
   if (!name || !email) throw new BadRequestError("Provide all required fields");
 
+  // Generate a temporary password as a random hex string
+  let temporaryPassword = crypto.randomBytes(10).toString("hex");
+
+  // Generate a random token for updating the password
+  let passwordResetToken = crypto.randomBytes(32).toString("hex");
+
+  // Create a URL for updating the password using the generated token
+  const url = process.env.CORS_URL + `/update-password/${passwordResetToken}`;
+
+  // Generate an email template for account creation with the user's name, temporary password, and the password reset URL
+  const template = accountCreationTemplate(name, temporaryPassword, url);
+
+  // Send the email using the mailSender function
+  await mailSender(email, template.subject, template.html);
+
+  // Generate a unique username for the user based on their name
   const username: string = await getUniqueUsername(name);
+
+  // Create a new user record in the database
   const user = await prisma.user.create({
     data: { name, email, username, password: String(Math.floor(Math.random() * 10000000)) },
   });
+
+  // Create a token record associated with the user for password reset
+  await prisma.token.create({
+    data: { username: user.username, token: passwordResetToken },
+  });
+
+  // Check if user creation was successful, and send a response accordingly
   if (!user) throw new CustomAPIError("Some Error occurred.");
   res.status(StatusCodes.CREATED).json({ status: StatusCodes.CREATED });
 };
 
 /*<--SEND_PASSWORD_EMAIL-->*/
 export const passwordTokenEmail = async (req: Request, res: Response) => {
-  const email = req.params.email; //TODO: from query or body
+  // Extract the email parameter from the request URL
+  const email = req.params.email;
+
+  // Find the user with the provided email in the database
   const user = await prisma.user.findFirst({ where: { email } });
+
+  // Check if a user with the provided email exists
   if (!user) throw new NotFoundError("User not found");
+
+  // Generate a random token for resetting the password as a hex string
   let resetToken = crypto.randomBytes(32).toString("hex");
 
+  // Create or update a token record associated with the user for password reset
   await prisma.token.upsert({
-    create: { username: user.username, token: resetToken }, //create or update token
+    create: { username: user.username, token: resetToken },
     where: { username: user.username },
     update: { createdAt: new Date(), token: resetToken },
   });
 
+  // Create a URL for updating the password using the generated token
   const url = process.env.CORS_URL + `/update-password/${resetToken}`;
-  const template = setPasswordTemplate(email, user.name, url);
 
+  // Generate an email template for setting the password with the user's name and the password reset URL
+  const template = setPasswordTemplate(user.name, url);
+
+  // Send the email using the mailSender function
   await mailSender(email, template.subject, template.html);
 
+  // Respond with a success message
   res.json({ message: "Password update link has been sent successfully to " + email });
 };
 

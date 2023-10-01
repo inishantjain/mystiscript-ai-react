@@ -1,6 +1,5 @@
-export const setPasswordTemplate = (name: string, link: string) => {
-  const subject = "Set Your Password - MystiScript";
-
+export const accountCreationTemplate = (name: string, temporaryPassword: string, link: string) => {
+  const subject = `Your account has been created - MystiScript`;
   const html = `
 <html>
 <head>
@@ -20,7 +19,7 @@ export const setPasswordTemplate = (name: string, link: string) => {
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Box shadow for the email content */
     }
     .header {
-      background-color: #ff4444; /* Red background color for the header */
+      background-color: #4caf50; /* Green background color for the header */
       color: #fff;
       text-align: center;
       padding: 10px;
@@ -30,9 +29,12 @@ export const setPasswordTemplate = (name: string, link: string) => {
     .content {
       padding: 20px;
     }
+    .password-info {
+      margin-top: 20px;
+    }
     .button {
       display: inline-block;
-      background-color: #ff4444; /* Red background color for the button */
+      background-color: #4caf50; /* Green background color for the button */
       color: #fff;
       padding: 10px 20px;
       text-decoration: none;
@@ -41,25 +43,30 @@ export const setPasswordTemplate = (name: string, link: string) => {
       transition: background-color 0.2s;
     }
     .button:hover {
-      background-color: #cc0000; /* Darker red color on button hover */
+      background-color: #45a049; /* Darker green color on button hover */
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>Password Update Confirmation</h1>
+      <h1>Welcome to MystiScript!</h1>
     </div>
     <div class="content">
       <p>Hello ${name},</p>
-      <p>To update your password, please click the button below:</p>
-      <a href="${link}" class="button">Update Password</a>
-      <p>Thank you for using MystiScript!</p>
+      <p>Your account has been created successfully.</p>
+      <div class="password-info">
+        <p><strong>Temporary Password:</strong> ${temporaryPassword}</p>
+        <p>Please click the button below to set your password and access your account:</p>
+        <a href="${link}" class="button">Set Password</a>
+      </div>
+      <p>If you didn't create this account or need further assistance, please contact our support team.</p>
+      <p>Thank you for choosing MystiScript!</p>
     </div>
   </div>
 </body>
 </html>
-`;
+  `;
 
   return { subject, html };
 };
