@@ -8,6 +8,7 @@ import crypto from "crypto";
 import { mailSender } from "../utils/emails/mailSender";
 import { setPasswordTemplate } from "../utils/emails/setPasswordTemplate";
 import { accountCreationTemplate } from "../utils/emails/accountCreationTemplate";
+import bcrypt from "bcryptjs";
 
 /*<-------REGISTER------->*/
 export const register = async (req: Request, res: Response) => {
@@ -19,7 +20,8 @@ export const register = async (req: Request, res: Response) => {
 
   // Generate a temporary password as a random hex string
   let temporaryPassword = crypto.randomBytes(6).toString("hex");
-
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(temporaryPassword, salt);
   // Generate a random token for updating the password
   let passwordResetToken = crypto.randomBytes(32).toString("hex");
 
@@ -37,16 +39,17 @@ export const register = async (req: Request, res: Response) => {
 
   // Create a new user record in the database
   const user = await prisma.user.create({
-    data: { name, email, username, password: String(Math.floor(Math.random() * 10000000)) },
+    data: { name, email, username, password: hashedPassword },
   });
+
+  // Check if user creation was successful, and send a response accordingly
+  if (!user) throw new CustomAPIError("Some Error occurred.");
 
   // Create a token record associated with the user for password reset
   await prisma.token.create({
     data: { username: user.username, token: passwordResetToken },
   });
 
-  // Check if user creation was successful, and send a response accordingly
-  if (!user) throw new CustomAPIError("Some Error occurred.");
   res.status(StatusCodes.CREATED).json({ status: StatusCodes.CREATED });
 };
 
