@@ -18,7 +18,7 @@ export const register = async (req: Request, res: Response) => {
   if (!name || !email) throw new BadRequestError("Provide all required fields");
 
   // Generate a temporary password as a random hex string
-  let temporaryPassword = crypto.randomBytes(10).toString("hex");
+  let temporaryPassword = crypto.randomBytes(6).toString("hex");
 
   // Generate a random token for updating the password
   let passwordResetToken = crypto.randomBytes(32).toString("hex");

@@ -22,7 +22,7 @@ function PasswordUpdate() {
     } catch (error: any) {
       if (error?.data?.message) return toast.error(error.data.message);
       toast.error("Something went wrong");
-      console.error("Password update error" + error);
+      console.error("Password update error", error);
     } finally {
       toast.dismiss(toastId);
     }

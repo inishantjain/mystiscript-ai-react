@@ -15,3 +15,5 @@ src/db/prisma/migrations
 node_modules
 # Keep environment variables out of version control
 .env
+#db tests
+*.session.sql
