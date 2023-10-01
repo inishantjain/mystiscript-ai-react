@@ -9,6 +9,8 @@ import RequireUser from "../components/RequireUser";
 import AddPost from "../pages/AddPost";
 import { EditProfile } from "../pages/UserProfile";
 import NotFoundPage from "../pages/NotFound";
+import PasswordUpdate from "../pages/Authentication/PasswordUpdate";
+import ForgotPassword from "../pages/Authentication/ForgotPassword";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route element={<AuthenticationPage />}>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/update-password/:token" element={<PasswordUpdate />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

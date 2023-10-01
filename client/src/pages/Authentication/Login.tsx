@@ -6,6 +6,8 @@ import React from "react";
 import toast from "react-hot-toast";
 
 const Login = () => {
+  const [login, { isLoading, isSuccess }] = useLoginMutation();
+
   const [form, setForm] = React.useState<LoginRequest>({
     email: "",
     password: "",
@@ -19,15 +21,23 @@ const Login = () => {
     });
   };
 
-  const [login, { isLoading, isSuccess }] = useLoginMutation();
-
   async function handleLoginSubmit(e: React.FormEvent): Promise<any> {
     e.preventDefault();
     if (!form.email || !form.password) return toast.error("Enter all fields values");
     const toastId = toast.loading("logging you in...");
-    await login(form);
+    try {
+      await login(form).unwrap();
+    } catch (error: any) {
+      if (error?.data?.message) {
+        toast.error(error.data.message);
+      } else {
+        toast.error("Something went wrong");
+        console.error("error", error);
+      }
+    }
     toast.dismiss(toastId);
   }
+
   if (isSuccess) return <Navigate to="/profile" />;
 
   return (
@@ -54,16 +64,23 @@ const Login = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <div className="md:flex-row flex flex-col gap-5 justify-between">
           <div>
-            Don't have an Account?&nbsp;
-            <Link className="text-blue-600 underline" to="/register">
-              Register
-            </Link>
+            <div>
+              Don't have an Account?&nbsp;
+              <Link className="text-blue-600 underline" to="/register">
+                Register
+              </Link>
+            </div>
+            <div>
+              <Link className="text-blue-600 underline" to="/forgot-password">
+                Forgot Password ?
+              </Link>
+            </div>
           </div>
+          {/* Submit Button */}
           <div className="flex justify-end">
-            <BtnPrimary disabled={isLoading} className="py-3">
+            <BtnPrimary type="submit" disabled={isLoading} className="py-2">
               Login
             </BtnPrimary>
           </div>

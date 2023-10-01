@@ -24,6 +24,12 @@ model User {
     likedPosts Post[] @relation("upvotedPosts")
 }
 
+model Token {
+    username  String   @unique
+    token     String
+    createdAt DateTime @default(now())
+}
+
 model Post {
     id        String   @id @default(uuid())
     title     String

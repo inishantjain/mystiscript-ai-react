@@ -3,23 +3,46 @@ import { prisma } from "../config/database";
 import { BadRequestError, CustomAPIError, NotFoundError, UnAuthenticatedError } from "../errors";
 import { comparePassword, createJWT, getUniqueUsername } from "../utils/auth";
 import { StatusCodes } from "http-status-codes";
-import { ONE_MONTH } from "../utils/constants/duration";
-//TODO: can write net spec comments
+import { FIVE_MINUTES, ONE_MONTH } from "../utils/constants/duration";
+import crypto from "crypto";
+import { mailSender } from "../utils/emails/mailSender";
+import { setPasswordTemplate } from "../utils/emails/setPasswordTemplate";
 
-/*<----REGISTER---->*/
+/*<-------REGISTER------->*/
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) throw new BadRequestError("Provide all required fields");
+  const { name, email } = req.body;
+  if (!name || !email) throw new BadRequestError("Provide all required fields");
 
   const username: string = await getUniqueUsername(name);
   const user = await prisma.user.create({
-    data: { name, email, username, password },
+    data: { name, email, username, password: String(Math.floor(Math.random() * 10000000)) },
   });
   if (!user) throw new CustomAPIError("Some Error occurred.");
   res.status(StatusCodes.CREATED).json({ status: StatusCodes.CREATED });
 };
 
-/*<------LOGIN----->*/
+/*<--SEND_PASSWORD_EMAIL-->*/
+export const passwordTokenEmail = async (req: Request, res: Response) => {
+  const email = req.params.email; //TODO: from query or body
+  const user = await prisma.user.findFirst({ where: { email } });
+  if (!user) throw new NotFoundError("User not found");
+  let resetToken = crypto.randomBytes(32).toString("hex");
+
+  await prisma.token.upsert({
+    create: { username: user.username, token: resetToken }, //create or update token
+    where: { username: user.username },
+    update: { createdAt: new Date(), token: resetToken },
+  });
+
+  const url = process.env.CORS_URL + `/update-password/${resetToken}`;
+  const template = setPasswordTemplate(email, user.name, url);
+
+  await mailSender(email, template.subject, template.html);
+
+  res.json({ message: "Password update link has been sent successfully to " + email });
+};
+
+/*<---------LOGIN-------->*/
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) throw new BadRequestError("Provide all required fields");
@@ -51,7 +74,7 @@ export const login = async (req: Request, res: Response) => {
     .json({ status: StatusCodes.OK }); //rtk query expects json response(when not set explicitly)
 };
 
-/*<----GET_USER---->*/
+/*<-------GET_USER------->*/
 export const getUser = async (req: Request, res: Response) => {
   const { id } = req.user;
 
@@ -65,7 +88,7 @@ export const getUser = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ data: { ...user, password: undefined } });
 };
 
-/*<----EDIT_USER---->*/
+/*<-------EDIT_USER------->*/
 export const editUser = async (req: Request, res: Response) => {
   const { id } = req.user;
   const { name, about } = req.body;
@@ -81,4 +104,21 @@ export const editUser = async (req: Request, res: Response) => {
   });
   if (!user) throw new CustomAPIError("Error updating user");
   res.status(StatusCodes.OK).json({ status: StatusCodes.OK });
+};
+
+/*<-SET_ACCOUNT_PASSWORD->*/
+export const setAccountPassword = async (req: Request, res: Response) => {
+  const token = req.params.token;
+  const password = req.body.password;
+  if (!token) throw new BadRequestError("token not provided");
+  const tokenModel = await prisma.token.findFirst({ where: { token } });
+  if (!tokenModel) throw new BadRequestError("Invalid token");
+
+  //FIVE_MINUTES expiration for token
+  if (tokenModel.createdAt.getTime() + FIVE_MINUTES < Date.now()) throw new BadRequestError("Token has expired");
+  await prisma.token.update({ where: { username: tokenModel?.username }, data: { createdAt: new Date(0) } }); //make token expired
+
+  const user = await prisma.user.update({ where: { username: tokenModel.username }, data: { password } });
+
+  res.status(StatusCodes.OK).json({ message: "Password updated successfully" });
 };

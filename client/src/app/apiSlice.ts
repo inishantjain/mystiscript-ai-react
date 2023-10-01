@@ -23,7 +23,7 @@ export const api = createApi({
           await queryFulfilled;
           await dispatch(api.endpoints.getUser.initiate(null));
         } catch (error: any) {
-          if (error?.error?.data?.msg) toast.error(error.error.data.msg);
+          if (error.error?.data?.message) toast.error(error.error.data.message);
           else toast.error("Something went wrong");
           console.error("Error : ", error);
         }
@@ -35,6 +35,21 @@ export const api = createApi({
         method: "POST",
         body: formData,
       }),
+    }),
+    forgotPassword: builder.mutation<void, string>({
+      query: (email) => ({
+        url: `/auth/send-password-mail/${email}`,
+        method: "POST",
+      }),
+    }),
+    updatePassword: builder.mutation<void, { password: string; token: string }>({
+      query({ password, token }) {
+        return {
+          url: `/auth/set-password/${token}`,
+          method: "POST",
+          body: { password },
+        };
+      },
     }),
     getUser: builder.query<User, null>({
       query() {
@@ -144,6 +159,8 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetUserQuery,
+  useUpdatePasswordMutation,
+  useForgotPasswordMutation,
   useEditUserMutation,
   useGetPostQuery,
   useGetPostPaginationQuery,

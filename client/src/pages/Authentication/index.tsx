@@ -12,7 +12,7 @@ function AuthenticationPage() {
       <Link className="font-rancho text-3xl font-semibold" to="/">
         MystiScript
       </Link>
-      <div className="max-w-md w-11/12 p-6 ring ring-conGreen ring-opacity-50 rounded-lg shadow-md">
+      <div className="max-w-md w-11/12 p-6 ring ring-conGreen ring-opacity-50 rounded-lg shadow-2xl bg-rose-50">
         <Outlet />
       </div>
     </div>
