@@ -15,6 +15,8 @@ export const errorHandlerMiddleware = (
     if (err.code === "P2002") {
       customError.statusCode = 400;
       customError.message = `${err.meta!["target"]} already exists`;
+    } else {
+      customError.message = err.message;
     }
   } else {
     customError.message = "Internal error: " + err.message;
