@@ -111,7 +111,7 @@ export const login = async (req: Request, res: Response) => {
     .cookie("accessToken", token, {
       httpOnly: process.env.NODE_ENV === "production" ? true : false,
       path: "/", //accessible on all routes
-      // sameSite: "lax", //not working with firefox as of now
+      sameSite: "none", //lax doesn't work for chrome and edge browsers
       secure: true,
       maxAge: ONE_MONTH,
     })
